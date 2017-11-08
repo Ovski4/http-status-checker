@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+
+  node:
+    image: node:${NODE_VERSION}
+    build:
+      context: .docker/build/node${NODE_VERSION}
+    container_name: http-status-checker-node
+
+    # In case you want to test your local applications running on docker
+    # use external_links and ensure your containers are on the same network
+
+    # external_links:
+    #   - my-web-container-name:my-local-website.docker
+    working_dir: /usr/src/app/
+    privileged: true
+    volumes:
+      - ./:/usr/src/app/
