@@ -9,9 +9,10 @@ module.exports = class ResponseCollection extends EventEmitter {
         this.responses = [];
     }
 
-    hasResponse (response) {
+    hasResponseWithLinkThatMatches (pattern) {
         for (let i = 0; i < this.responses.length; i++) {
-            if (response.url === this.responses[i].url) {
+            let regex = new RegExp(pattern);
+            if (regex.test(this.responses[i].url)) {
                 return true;
             }
         }
@@ -30,13 +31,12 @@ module.exports = class ResponseCollection extends EventEmitter {
     }
 
     add (response) {
-        if (!this.hasResponse(response)) {
+        if (!this.hasResponseWithLink(response.url)) {
             this.responses.push(response);
             this.emit('response_added', response);
         }
+
+        return this;
     }
 
-    getLength () {
-        return this.responses.length;
-    }
 };

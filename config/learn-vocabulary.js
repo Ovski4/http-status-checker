@@ -7,6 +7,8 @@ module.exports = {
     ],
     follow_once_patterns: [
         '\/edition\/[a-z]+-[a-z]+\/[0-9]+\/edit',
+        '\/edition\/[a-z]+-[a-z]+\\?page=[0-9]+',
+        '\/revision\/[a-z]+-[a-z]+\\?page=[0-9]+',
         '\/[a-z]+-[a-z]+\/star\/[0-9]+'
     ],
     login: {
