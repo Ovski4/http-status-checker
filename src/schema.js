@@ -19,7 +19,40 @@ module.exports = {
             default: []
         },
         login: {
-            type: 'object'
+            type: 'object',
+            properties: {
+                url: {
+                    type: 'string'
+                },
+                selector: {
+                    type: 'object',
+                    properties: {
+                        username: {
+                            type: 'string'
+                        },
+                        password: {
+                            type: 'string'
+                        },
+                        submit_button: {
+                            type: 'string'
+                        }
+                    },
+                    required: ['username', 'password', 'submit_button']
+                },
+                data: {
+                    type: 'object',
+                    properties: {
+                        username: {
+                            type: 'string'
+                        },
+                        password: {
+                            type: 'string'
+                        }
+                    },
+                    required: ['username', 'password']
+                }
+            },
+            required: ['url', 'selector', 'data']
         }
     },
     required: ['base_url']
