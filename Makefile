@@ -11,3 +11,7 @@ command:
 .PHONY: bash
 bash:
 	docker-compose exec '$(target_container)' bash
+
+.PHONY: test
+test:
+	docker-compose run --rm $(target_container) ./node_modules/mocha/bin/mocha --recursive
