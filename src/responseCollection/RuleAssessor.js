@@ -10,10 +10,10 @@ module.exports = class RuleAssessor {
         this.responseCollection = responseCollection;
     }
 
-    shouldBeFollowed(link) {
+    shouldBeFollowed(link, referer) {
         for (let file in rules) {
             if (rules.hasOwnProperty(file)) {
-                if (!rules[file].matches(link, this.configuration, this.responseCollection)) {
+                if (!rules[file].matches(link, this.configuration, this.responseCollection, referer)) {
                     return false;
                 }
             }

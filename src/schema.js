@@ -6,16 +6,29 @@ module.exports = {
         base_url: {
             type: 'string',
         },
+        follow_externals: {
+            type: 'boolean',
+            default: false
+        },
         never_follow_patterns: {
             type: 'array',
+            items: {
+                type: 'string'
+            },
             default: []
         },
         follow_once_patterns: {
             type: 'array',
+            items: {
+                type: 'string'
+            },
             default: []
         },
         extra_links:{
             type: 'array',
+            items: {
+                type: 'string'
+            },
             default: []
         },
         login: {
@@ -53,6 +66,13 @@ module.exports = {
                 }
             },
             required: ['url', 'selector', 'data']
+        },
+        output_information: {
+            type: 'array',
+            items: {
+                type: 'string'
+            },
+            default: []
         }
     },
     required: ['base_url']

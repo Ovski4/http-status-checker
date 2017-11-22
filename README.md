@@ -6,6 +6,12 @@ Check the status code of all resources on a website.
 This repository provides a tool to get the **HTTP status code** of every resources (links, assets such as images, scripts and css files) of a website.
 It uses [pupeeter](https://github.com/GoogleChrome/puppeteer) to control **Headless Chrome**. If you need to test pages behind a **login form**, this tool is very handy. 
 
+
+- [Installation](#installation)
+- [Usage](#usage)
+- [Crawling configuration](#crawling-configuration)
+- [Output configuration](#output-configuration)
+
 Installation
 ------------
 
@@ -21,10 +27,12 @@ Usage
 node scan.js http://my-website.com
 ```
 
-Configuration
--------------
+You can also test external links by appending the **--follow-externals** option.
 
-If you want to add specific rules while crawling your website, 
+Crawling configuration
+----------------------
+
+If you want to use specific rules while crawling your website, 
 you will need to create a configuration file and run the following command
 
 ```bash
@@ -36,6 +44,15 @@ The minimum requirement for your configuration is the **base_url**.
 ```js
 module.exports = {
     base_url: 'https://example.com'
+};
+```
+
+You can test external links by setting the **follow_externals** boolean to true.
+
+```js
+module.exports = {
+    // ...
+    follow_externals: true
 };
 ```
 
@@ -102,3 +119,23 @@ node scan.js --config='./config/learn-vocabulary.js'
 
 Have a look at the [example](./config/learn-vocabulary.js). The configuration is pretty much self explanatory.
 The JSON schema is also [right here](./src/schema.js).
+
+Output configuration
+--------------------
+
+You might want to display more information than just the http status code and the link.
+
+You can use the **output_information** array.
+
+```js
+module.exports = {
+    // ...
+    output_information: [
+        'referer',
+        'content-type'
+    ]
+};
+```
+
+* If set, the **referer** will display the page link on which the link was found. It can be useful to find where a **dead link** is.
+* If set, the **content-type** will display the value of the content-type header of the page link.

@@ -2,7 +2,9 @@
 
 const puppeteer          = require('puppeteer');
 const { URL }            = require('url');
-const output             = require('./src/tools/output');
+const consoleOutput      = require('./src/tools/console');
+const hostsTool          = require('./src/tools/hosts');
+const linkTool           = require('./src/tools/link');
 const configuration      = require('./src/configuration');
 const ResponseCollection = require('./src/responseCollection/ResponseCollection');
 const RuleAssessor       = require('./src/responseCollection/RuleAssessor');
@@ -22,12 +24,6 @@ try  {
     const responseCollection = new ResponseCollection();
     const ruleAssessor = new RuleAssessor(config, responseCollection);
 
-    const getFullUrl = function (relativeUrl) {
-        let url = new URL(relativeUrl, config.base_url);
-
-        return url.href.replace(/(#.*)/, '');
-    };
-
     const getLinks = async function () {
         return await page.evaluate(() => {
             const anchors = Array.from(document.querySelectorAll('a'));
@@ -38,7 +34,7 @@ try  {
 
     const login = async function () {
         try {
-            await page.goto(getFullUrl(config.login.url));
+            await page.goto(linkTool.getFullUrl(config.login.url, config.base_url));
             await page.click(config.login.selector.username);
             await page.keyboard.type(config.login.data.username);
             await page.click(config.login.selector.password);
@@ -46,13 +42,15 @@ try  {
             await page.click(config.login.selector.submit_button);
             await page.waitForNavigation();
         } catch (e) {
-            output.writeln('Error on login: <error>' + e.message + '</error>');
+            console.log(e);
+            consoleOutput.writeln('Error on login: <error>' + e.message + '</error>');
         }
     };
 
     const followLink = async function (link) {
         try {
             await page.goto(link);
+
             const links = await getLinks();
 
             for (let i = 0; i < links.length; i++) {
@@ -60,32 +58,27 @@ try  {
                     continue;
                 }
 
-                let fullLink = getFullUrl(links[i]);
+                let fullLink = linkTool.getFullUrl(links[i], link);
                 // if the link was not already followed
-                if (ruleAssessor.shouldBeFollowed(fullLink)) {
+                if (ruleAssessor.shouldBeFollowed(fullLink, link)) {
                     await followLink(fullLink);
                 }
             }
         } catch (e) {
-            output.writeln('Error following link <info>' + link + '</info>: <error>' + e.message + '</error>');
+            consoleOutput.writeln('Error following link <info>' + link + '</info>: <error>' + e.message + '</error>');
         }
     };
 
     page.on('response', response => {
-        if (ruleAssessor.shouldBeFollowed(response.url)) {
+        if (ruleAssessor.shouldBeFollowed(response.url, page.url())) {
+            response.referer = page.url();
+            response['content-type'] = response.headers['content-type'];
             responseCollection.add(response);
         }
     });
 
     responseCollection.on('response_added', (response) => {
-        if (response.status >= 400) {
-            output.writeln('<error>' + response.status + '</error>: ' + response.url + ' (link found on page <comment>'+ page.url() + '</comment>)');
-        } else  if (response.status < 300) {
-            output.writeln('<info>' + response.status + '</info>: ' + response.url);
-        } else {
-            output.writeln('<comment>' + response.status + '</comment>: ' + response.url);
-        }
-
+        consoleOutput.printResponse(response, config);
     });
 
     if (config.login) {
@@ -95,7 +88,7 @@ try  {
     await followLink(config.base_url);
 
     for (let i = 0; i < config.extra_links.length; i++) {
-        await followLink(getFullUrl(config.extra_links[i]));
+        await followLink(linkTool.getFullUrl(config.extra_links[i], config.base_url));
     }
 
     await browser.close();

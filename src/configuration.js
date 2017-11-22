@@ -10,10 +10,12 @@ module.exports = {
         };
 
         const args = parseArguments(process.argv.slice(2));
-
         let configuration;
         if (args._.length === 1) {
             configuration = { base_url: args._[0] };
+            if (typeof args['follow-externals'] !== 'undefined') {
+                configuration['follow_externals'] = true;
+            }
         } else {
             configuration = require('../' + args.config);
         }
