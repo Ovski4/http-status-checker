@@ -3,7 +3,6 @@
 const puppeteer          = require('puppeteer');
 const { URL }            = require('url');
 const consoleOutput      = require('./src/tools/console');
-const hostsTool          = require('./src/tools/hosts');
 const linkTool           = require('./src/tools/link');
 const configuration      = require('./src/configuration');
 const ResponseCollection = require('./src/responseCollection/ResponseCollection');
@@ -70,9 +69,9 @@ try  {
     };
 
     page.on('response', response => {
-        if (ruleAssessor.shouldBeFollowed(response.url, page.url())) {
+        if (ruleAssessor.shouldBeFollowed(response.url(), page.url())) {
             response.referer = page.url();
-            response['content-type'] = response.headers['content-type'];
+            response['content-type'] = response.headers()['content-type'];
             responseCollection.add(response);
         }
     });

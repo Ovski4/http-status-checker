@@ -12,7 +12,7 @@ module.exports = class ResponseCollection extends EventEmitter {
     hasResponseWithLinkThatMatches (pattern) {
         for (let i = 0; i < this.responses.length; i++) {
             let regex = new RegExp(pattern);
-            if (regex.test(this.responses[i].url)) {
+            if (regex.test(this.responses[i].url())) {
                 return true;
             }
         }
@@ -22,7 +22,7 @@ module.exports = class ResponseCollection extends EventEmitter {
 
     hasResponseWithLink (link) {
         for (let i = 0; i < this.responses.length; i++) {
-            if (link === this.responses[i].url) {
+            if (link === this.responses[i].url()) {
                 return true;
             }
         }
@@ -31,7 +31,7 @@ module.exports = class ResponseCollection extends EventEmitter {
     }
 
     add (response) {
-        if (!this.hasResponseWithLink(response.url)) {
+        if (!this.hasResponseWithLink(response.url())) {
             this.responses.push(response);
             this.emit('response_added', response);
         }

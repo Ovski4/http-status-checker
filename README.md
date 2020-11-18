@@ -6,11 +6,12 @@ Check the status code of all resources on a website.
 This repository provides a tool to get the **HTTP status code** of every resources (links, assets such as images, scripts and css files) of a website.
 It uses [pupeeter](https://github.com/GoogleChrome/puppeteer) to control **Headless Chrome**. If you need to test pages behind a **login form**, this tool is very handy. 
 
-
-- [Installation](#installation)
-- [Usage](#usage)
-- [Crawling configuration](#crawling-configuration)
-- [Output configuration](#output-configuration)
+- [HTTP status checker](#http-status-checker)
+  - [Installation](#installation)
+  - [Usage](#usage)
+  - [Installation and usage with docker](#installation-and-usage-with-docker)
+  - [Crawling configuration](#crawling-configuration)
+  - [Output configuration](#output-configuration)
 
 Installation
 ------------
@@ -25,6 +26,16 @@ Usage
 
 ```bash
 node scan.js http://my-website.com
+```
+
+Installation and usage with docker
+----------------------------------
+
+```bash
+# give the user running in the container permissions on the node_modules directory
+sudo mkdir -p node_modules && chown $(docker-compose run node id -g | sed 's/\r$//') -R node_modules
+docker-compose run node npm install
+docker-compose run node node scan.js http://my-website.com
 ```
 
 You can also test external links by appending the **--follow-externals** option.

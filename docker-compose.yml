@@ -3,10 +3,9 @@ version: '3'
 services:
 
   node:
-    image: node:${NODE_VERSION}
+    image: node:14.15.1
     build:
-      context: .docker/build/node${NODE_VERSION}
-    container_name: http-status-checker-node
+      context: .docker/build/node-14.15.1
 
     # In case you want to test your local applications running on docker
     # use external_links and ensure your containers are on the same network

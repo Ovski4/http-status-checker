@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = {
-    base_url: 'https://learn-vocabulary.com',
+    base_url: 'https://learn-vocabulary.ovski.net',
     never_follow_patterns: [
         '\/(en|fr)/logout$' // avoid disconnection
     ],

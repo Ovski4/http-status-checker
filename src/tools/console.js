@@ -6,12 +6,12 @@ module.exports = {
 
         let line = '';
         // Base output
-        if (response.status >= 400) {
-            line += '<error>' + response.status + '</error>: ' + response.url;
-        } else  if (response.status < 300) {
-            line += '<info>' + response.status + '</info>: ' + response.url;
+        if (response.status() >= 400) {
+            line += '<error>' + response.status() + '</error>: ' + response.url();
+        } else  if (response.status() < 300) {
+            line += '<info>' + response.status() + '</info>: ' + response.url();
         } else {
-            line += '<comment>' + response.status + '</comment>: ' + response.url;
+            line += '<comment>' + response.status() + '</comment>: ' + response.url();
         }
 
         const infos = configuration.output_information;
