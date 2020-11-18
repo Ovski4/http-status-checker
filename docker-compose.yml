@@ -5,13 +5,20 @@ services:
   node:
     build:
       context: .docker/build/node-14.15.1
-
-    # In case you want to test your local applications running on docker
-    # use external_links and ensure your containers are on the same network
-
-    # external_links:
-    #   - my-web-container-name:my-local-website.docker
     working_dir: /usr/src/app/
     privileged: true
     volumes:
       - ./:/usr/src/app/
+
+    # In case you want to test your local applications running on docker
+    # use external_links and ensure your containers are on the same network.
+    # Example :
+
+    # external_links:
+    #   - my-web-container-name:my-local-website.docker
+    # networks:
+    #   - my_network
+
+# networks:
+#   my_neywork:
+#     external: true
