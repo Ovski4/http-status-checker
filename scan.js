@@ -1,7 +1,6 @@
 'use strict';
 
 const puppeteer          = require('puppeteer');
-const { URL }            = require('url');
 const consoleOutput      = require('./src/tools/console');
 const linkTool           = require('./src/tools/link');
 const configuration      = require('./src/configuration');
@@ -17,11 +16,32 @@ try  {
     process.exit(1);
 }
 
+const responseCollection = new ResponseCollection();
+const ruleAssessor = new RuleAssessor(config, responseCollection);
+
+const printFailedResponses = () => {
+    const failedResponses = responseCollection.getFailedResponses();
+
+    if (failedResponses.length > 0) {
+        consoleOutput.writeln('\r\n============= Failed urls ================');
+        responseCollection.getFailedResponses().forEach(response => {
+            config.output_information = [
+                'referer',
+                'content-type'
+            ];
+            consoleOutput.printResponse(response, config);
+        });
+    }
+}
+
+process.on('SIGINT', function() {
+    printFailedResponses();
+    process.exit();
+});
+
 (async () => {
     const browser = await puppeteer.launch({headless: true});
     const page = await browser.newPage();
-    const responseCollection = new ResponseCollection();
-    const ruleAssessor = new RuleAssessor(config, responseCollection);
 
     const getLinks = async function () {
         return await page.evaluate(() => {
@@ -39,7 +59,6 @@ try  {
             await page.click(config.login.selector.password);
             await page.keyboard.type(config.login.data.password);
             await page.click(config.login.selector.submit_button);
-            await page.waitForNavigation();
         } catch (e) {
             console.log(e);
             consoleOutput.writeln('Error on login: <error>' + e.message + '</error>');
@@ -91,4 +110,6 @@ try  {
     }
 
     await browser.close();
+
+    printFailedResponses();
 })();

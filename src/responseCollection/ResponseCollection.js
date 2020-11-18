@@ -9,6 +9,10 @@ module.exports = class ResponseCollection extends EventEmitter {
         this.responses = [];
     }
 
+    getFailedResponses () {
+        return this.responses.filter(response => response.status() > 399);
+    }
+
     hasResponseWithLinkThatMatches (pattern) {
         for (let i = 0; i < this.responses.length; i++) {
             let regex = new RegExp(pattern);
