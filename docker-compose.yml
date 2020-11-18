@@ -3,7 +3,6 @@ version: '3'
 services:
 
   node:
-    image: node:14.15.1
     build:
       context: .docker/build/node-14.15.1
 
